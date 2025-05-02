@@ -238,6 +238,7 @@
             <div class="flip-card__back">
               <div class="title">Cadastrar Monitor</div>
               <form id="cadastro-form" class="flip-card__form" action="">
+                <input type="text" class="flip-card__input" id="cadastro-nome" placeholder="Nome do monitor" required>
                 <input class="flip-card__input" id="cadastro-email" name="email" placeholder="E-mail do monitor" type="email" required>
                 <input class="flip-card__input" id="cadastro-senha" name="senha" placeholder="Senha" type="password" required>
                 <button type="submit" class="flip-card__btn">Cadastrar</button>
@@ -254,9 +255,10 @@
     </div>
   
     <!-- Mensagem de erro ou sucesso -->
-    <div id="mensagem" style="text-align: center; margin-top: 200px;"></div>
+    <div id="mensagem" style="text-align: center; margin-top: 230px;"></div>
   
     <script>
+      
       const toggleCheckbox = document.getElementById('formToggle');
       const modoTexto = document.getElementById('modo');
   
@@ -267,7 +269,8 @@
       // Cadastro
       document.getElementById('cadastro-form').addEventListener('submit', async function (e) {
         e.preventDefault();
-  
+
+        const nome = document.getElementById('cadastro-nome').value;
         const email = document.getElementById('cadastro-email').value;
         const senha = document.getElementById('cadastro-senha').value;
   
@@ -276,7 +279,7 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, senha }),
+          body: JSON.stringify({ nome, email, senha }),
         });
   
         const result = await response.json();

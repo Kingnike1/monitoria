@@ -1,17 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Presença</title>
   <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
   <div class="container">
     <h2>Registro de Presença</h2>
     <form id="presencaForm">
       <input type="text" id="nome_aluno" placeholder="Nome do Aluno" required>
-      <input type="text" id="turma" placeholder="Turma" required>
+
+      <!-- Campo de seleção para as turmas -->
+      <select id="turma" required>
+        <option value="" disabled selected>Selecione a Turma</option>
+        <option value="1º A - Agropecuária">1º A - Agropecuária</option>
+        <option value="1º B - Agropecuária">1º B - Agropecuária</option>
+        <option value="1º C - Agropecuária">1º C - Agropecuária</option>
+        <option value="1º A - Informática">1º A - Informática</option>
+        <option value="1º B - Informática">1º B - Informática</option>
+        <option value="1º - Meio Ambiente">1º - Meio Ambiente</option>
+        <option value="2º A - Agropecuária">2º A - Agropecuária</option>
+        <option value="2º B - Agropecuária">2º B - Agropecuária</option>
+        <option value="2º C - Agropecuária">2º C - Agropecuária</option>
+        <option value="2º A - Informática">2º A - Informática</option>
+        <option value="2º B - Informática">2º B - Informática</option>
+        <option value="2º - Meio Ambiente">2º - Meio Ambiente</option>
+        <option value="3º A - Agropecuária">3º A - Agropecuária</option>
+        <option value="3º B - Agropecuária">3º B - Agropecuária</option>
+        <option value="3º A - Informática">3º A - Informática</option>
+        <option value="3º B - Informática">3º B - Informática</option>
+        <option value="3º - Meio Ambiente">3º - Meio Ambiente</option>
+      </select>
+      <!-- Campo de seleção de monitor por checkbox -->
+      <div id="monitorContainer">
+        <p><strong>Selecione o(s) Monitor(es):</strong></p>
+        <!-- Checkboxes dos monitores aparecerão aqui -->
+      </div>
+
       <input type="date" id="data" required>
       <input type="time" id="horario" required>
       <textarea id="conteudo" placeholder="Conteúdo Ensinado"></textarea>
@@ -20,4 +49,5 @@
   </div>
   <script src="script.js"></script>
 </body>
+
 </html>

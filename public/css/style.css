@@ -48,7 +48,54 @@ input:focus, textarea:focus {
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
   outline: none;
 }
+/* Estilo especial para o select */
+select {
+  padding: 12px 20px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1em;
+  color: #333;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none; /* Remove o estilo padrão do select no navegador */
+  -webkit-appearance: none; /* Remove o estilo padrão no Safari */
+  -moz-appearance: none; /* Remove o estilo padrão no Firefox */
+}
 
+select:focus {
+  border-color: #4CAF50;
+  background-color: #eaf7e3;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+  outline: none;
+}
+
+select option {
+  padding: 10px;
+  background-color: #fff;
+  color: #333;
+}
+
+select option:hover {
+  background-color: #eaf7e3;
+}
+
+/* Adiciona o ícone de seta personalizado */
+select::-ms-expand {
+  display: none; /* Esconde o ícone padrão do IE */
+}
+
+select::after {
+  content: ' ▼';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 14px;
+  color: #333;
+}
 /* Estilo do botão */
 button {
   padding: 14px;

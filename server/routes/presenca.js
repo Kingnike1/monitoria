@@ -4,12 +4,17 @@ const db = require('../config/db');
 
 // Rota para registrar presença
 router.post('/registrar', (req, res) => {
-  const { nome_aluno, turma, data, horario, conteudo } = req.body;
+  const { nome_aluno, turma, data, horario, conteudo, monitor_id } = req.body;
 
-  const query = `INSERT INTO presencas (nome_aluno, turma, data, horario, conteudo) 
-                 VALUES (?, ?, ?, ?, ?)`;
+  if (!monitor_id) {
+    return res.status(400).json({ error: 'monitor_id é obrigatório.' });
+  }
 
-  db.query(query, [nome_aluno, turma, data, horario, conteudo], (err, results) => {
+  const query = `
+    INSERT INTO presencas (nome_aluno, turma, data, horario, conteudo, monitor_id)
+    VALUES (?, ?, ?, ?, ?, ?)`;
+
+  db.query(query, [nome_aluno, turma, data, horario, conteudo, monitor_id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Erro ao registrar presença', details: err });
     }
@@ -19,15 +24,39 @@ router.post('/registrar', (req, res) => {
 
 // NOVA: Rota para obter todas as presenças
 router.get('/listar', (req, res) => {
-  db.query('SELECT * FROM presencas ORDER BY data DESC, horario DESC', (err, resultados) => {
+  const query = `
+    SELECT 
+      p.id,
+      p.nome_aluno,
+      p.turma,
+      p.data,
+      p.horario,
+      p.conteudo,
+      m.nome AS nome_monitor
+    FROM presencas p
+    LEFT JOIN monitores m ON p.monitor_id = m.id
+    ORDER BY p.data DESC, p.horario DESC
+  `;
+
+  db.query(query, (err, resultados) => {
     if (err) {
-      console.error('Erro no MySQL:', err); // Log completo do erro no terminal
+      console.error('Erro no MySQL:', err);
       return res.status(500).json({ error: 'Erro ao buscar presenças' });
     }
     res.json(resultados);
   });
 });
 
+
+router.get('/listar/monitor', (req, res) => {
+  db.query('SELECT nome FROM monitores',(err, resultados) => {
+    if(err){
+      console.error('Erro no MySQL:', err);
+      return res.status(500).json({error: 'Erro ao buscar os monitores'});
+    }
+    res.json(resultados);
+  });
+});
 
 
 module.exports = router;

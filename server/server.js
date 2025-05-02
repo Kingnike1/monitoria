@@ -85,15 +85,20 @@ app.post('/cadastrar', async (req, res) => {
     return res.status(400).json({ error: 'Você já está logado. Não é necessário se cadastrar novamente.' });
   }
 
-  const { email, senha } = req.body;
+  const { nome, email, senha } = req.body;
   
   if (!email || !senha) {
     return res.status(400).json({ error: 'Por favor, preencha todos os campos.' });
   }
-
+  if (!email.endsWith('@monitora.com')) {
+    return res.status(400).json({
+      error: 'O e-mail deve terminar com @monitora.com'
+    });
+  }
+  
   const senhaCriptografada = await bcrypt.hash(senha, 10);
 
-  db.query('INSERT INTO monitores (email, senha) VALUES (?, ?)', [email, senhaCriptografada], (err) => {
+  db.query('INSERT INTO monitores (nome,email, senha) VALUES (?, ?, ?)', [nome, email, senhaCriptografada], (err) => {
     if (err) return res.status(500).json({ error: 'Erro ao cadastrar monitor' });
 
     res.json({ message: 'Monitor cadastrado com sucesso!' });
