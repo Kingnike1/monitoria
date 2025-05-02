@@ -6,28 +6,32 @@
     <link rel="stylesheet" href="./css/index.css" />
   </head>
   <body>
-    <header>
-      <h1>Bem-vindo ao Sistema de Monitoria</h1>
-      <nav>
-        <ul>
-          <li><a href="javascript:void(0);" onclick="carregarConteudo('cadastrar.html')">Cadastrar Monitor</a></li>
-          <li><a href="javascript:void(0);" onclick="carregarConteudo('login.html')">Login</a></li>
-          <li><a href="monitor.html">Painel do Monitor</a></li>
-          <li><a href="registro_presenca.html" target="_blank">Registro de Presença</a></li>
-        </ul>
-      </nav>
-    </header>
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <h2>Menu</h2>
+      <ul>
+        <li><a href="javascript:void(0);" onclick="carregarConteudo('cadastrar.html')">Cadastrar Monitor</a></li>
+        <li><a href="javascript:void(0);" onclick="carregarConteudo('login.html')">Login</a></li>
+        <li><a href="monitor.html">Painel do Monitor</a></li>
+        <li><a href="registro_presenca.html" target="_blank">Registro de Presença</a></li>
+      </ul>
+    </div>
 
-    <main>
-      <div id="conteudo"></div>
+    <!-- Main content -->
+    <div id="main-content">
+      <header>
+        <h1>Bem-vindo ao Sistema de Monitoria</h1>
+      </header>
 
-    </main>
+      <main>
+        <div id="conteudo"></div>
+      </main>
 
-    <!-- Div onde o conteúdo será carregado -->
+      <footer>
+        <p>&copy; 2025 Sistema de Monitoria</p>
+      </footer>
+    </div>
 
-    <footer>
-      <p>&copy; 2025 Sistema de Monitoria</p>
-    </footer>
     <script>
       function carregarConteudo(pagina) {
         // Faz uma requisição para carregar o conteúdo da página solicitada
@@ -42,32 +46,6 @@
             document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar a página: ${error}</p>`;
           });
       }
-
-      async function carregarPresencas() {
-        try {
-          const response = await fetch("/presencas/listar");
-          const presencas = await response.json();
-
-          const tabela = document.getElementById("tabela-presencas");
-          tabela.innerHTML = ""; // limpa a tabela antes de adicionar novas linhas
-
-          presencas.forEach((p) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td>${p.data}</td>
-              <td>${p.horario}</td>
-              <td>${p.nome_aluno}</td>
-              <td>${p.turma}</td>
-              <td>${p.conteudo || '-'}</td>
-            `;
-            tabela.appendChild(row);
-          });
-        } catch (error) {
-          console.error("Erro ao carregar presenças:", error);
-        }
-      }
-
-      carregarPresencas();
     </script>
   </body>
 </html>
