@@ -1,0 +1,81 @@
+/* Resetando margens e paddings padrão */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  
+  /* Header */
+  header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  header h1 {
+    font-size: 2.5em;
+  }
+  
+  /* Navegação */
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin: 0 15px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2em;
+  }
+  
+  nav ul li a:hover {
+    color: #ddd;
+    text-decoration: underline;
+  }
+  
+  /* Main content */
+  main {
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  main h2 {
+    font-size: 2em;
+    color: #333;
+  }
+  
+  main p {
+    font-size: 1.1em;
+    color: #555;
+    margin-top: 20px;
+  }
+  
+  /* Footer */
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #777;
+  }
+  
+  footer p {
+    color: #777;
+  }
+  
+  

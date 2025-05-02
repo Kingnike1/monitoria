@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Painel do Monitor</title>
+    <link rel="stylesheet" href="./css/monitor.css" />
+  </head>
+  <body>
+
+
+    <main>
+      <h2>Lista de Presenças</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Nome do Aluno</th>
+            <th>Turma</th>
+            <th>Conteúdo</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-presencas"></tbody>
+      </table>
+    </main>
+
+
+    <script>
+      async function carregarPresencas() {
+        try {
+          const response = await fetch("/presencas/listar");
+          const presencas = await response.json();
+
+          const tabela = document.getElementById("tabela-presencas");
+          tabela.innerHTML = ""; // limpa a tabela antes de adicionar novas linhas
+
+          presencas.forEach((p) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${p.data}</td>
+              <td>${p.horario}</td>
+              <td>${p.nome_aluno}</td>
+              <td>${p.turma}</td>
+              <td>${p.conteudo || '-'}</td>
+            `;
+            tabela.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Erro ao carregar presenças:", error);
+        }
+      }
+
+      carregarPresencas();
+    </script>
+  </body>
+</html>

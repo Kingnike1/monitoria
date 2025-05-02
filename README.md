@@ -59,3 +59,10 @@ Armazena os seguintes dados:
 ✅ Criar o formulário de **registro de presença**.
 ✅ Criar o **painel do monitor** para visualizar os registros.
 ✅ Implementar exportação para **PDF/Excel**.
+
+
+<!-- Criar um painel de monitor para visualizar as presenças. -->
+
+Adicionar autenticação, se necessário.
+
+Implementar a exportação dos dados para PDF ou Excel.

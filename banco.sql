@@ -1,0 +1,18 @@
+CREATE DATABASE monitoria;
+
+USE monitoria;
+
+CREATE TABLE presencas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome_aluno VARCHAR(255) NOT NULL,
+    turma VARCHAR(255) NOT NULL,
+    data DATE NOT NULL,
+    horario TIME NOT NULL,
+    conteudo TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE monitores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  senha VARCHAR(255) NOT NULL
+);

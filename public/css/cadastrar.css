@@ -1,0 +1,77 @@
+
+  
+  /* Formulário */
+  form {
+    background-color: white;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+  }
+  
+  form input:focus {
+    border-color: #4CAF50;
+    outline: none;
+  }
+  
+  form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+  
+  form button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Mensagens */
+  #mensagem {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+  
+  #mensagem.green {
+    color: green;
+  }
+  
+  #mensagem.red {
+    color: red;
+  }
+  
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9em;
+  }
+  
+  footer p {
+    color: #777;
+  }
+  

@@ -1,0 +1,28 @@
+{
+  "name": "monitoria",
+  "version": "1.0.0",
+  "description": "## 1. Visão Geral Este sistema tem como objetivo registrar a presença dos alunos na monitoria, armazenando informações como nome, série/turma, horário e conteúdo ensinado. Além disso, permite que o monitor valide os registros e gere relatórios.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kingnike1/monitoria.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kingnike1/monitoria/issues"
+  },
+  "homepage": "https://github.com/Kingnike1/monitoria#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.1"
+  }
+}
