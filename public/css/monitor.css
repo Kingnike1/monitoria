@@ -1,71 +1,91 @@
+/* Estilo da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-  
-  /* Estilo da tabela */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Cabeçalhos da tabela */
-  th {
-    background-color: #007BFF;
-    color: #fff;
-    padding: 12px;
-    text-align: left;
-    font-size: 16px;
-  }
-  
-  /* Células da tabela */
-  td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
-    text-align: left;
-  }
-  
-  /* Estilo das linhas alternadas */
-  tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  /* Hover nas células */
-  tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Estilo para a tabela vazia */
-  #tabela-presencas {
-    text-align: center;
-  }
-  
-  /* Adicionando um botão de ação (por exemplo, um botão de logout ou de adicionar nova presença) */
-  button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  button:hover {
-    background-color: #218838;
-  }
-   /* Footer */
-   footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 0.9em;
-    color: #777;
-  }
-  
-  footer p {
-    color: #777;
-  }
+/* Cabeçalhos da tabela */
+th {
+  background-color: #0056b3;
+  color: #fff;
+  padding: 16px;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+th:hover {
+  background-color: #004085;
+}
+
+/* Células da tabela */
+td {
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 15px;
+  text-align: left;
+  color: #495057;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo das linhas alternadas */
+tr:nth-child(even) {
+  background-color: #f7f9fc;
+}
+
+tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Hover nas linhas */
+tr:hover td {
+  background-color: #f1f5f8;
+  cursor: pointer;
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Foco nas células quando interagindo */
+td:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 3px;
+}
+
+/* Estilo para a tabela vazia */
+#tabela-presencas {
+  text-align: center;
+  font-style: italic;
+  color: #6c757d;
+  padding: 20px;
+}
+
+/* Adicionando bordas arredondadas e efeitos de hover para a tabela */
+table th, table td {
+  border-radius: 8px;
+}
+
+/* Sombra na tabela */
+table {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo de carregamento para tabela */
+#tabela-presencas:empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: #6c757d;
+  font-weight: 600;
+  background-color: #f7f9fc;
+}

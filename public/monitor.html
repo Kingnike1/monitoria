@@ -1,56 +1,289 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Painel do Monitor</title>
-    <link rel="stylesheet" href="./css/monitor.css" />
-  </head>
-  <body>
 
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel do Monitor - Página Inicial</title>
+  <link rel="stylesheet" href="./css/index.css" />
+  <link rel="stylesheet" href="./css/monitor.css">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <h2>Menu</h2>
+    <ul>
+      <li>
+        <a href="javascript:void(0);" onclick="carregarConteudo('cadastrar.html')" onclick="togglePresencas()"
+          data-tooltip="Cadastrar Monitor" data-target="conteudo-presencas">
+          <i class="fas fa-user-plus"></i><span class="link-text">Cadastrar Monitor</span>
+        </a>
+      </li>
+      <li>
+        <a href="javascript:void(0);" onclick="carregarConteudo('index.html')" onclick="togglePresencas()"
+          data-tooltip="Login" data-target="conteudo-presencas">
+          <i class="fas fa-sign-in-alt"></i><span class="link-text">Login</span>
+        </a>
+      </li>
+      <li>
+        <a href="registro_presenca.html" target="_blank" data-tooltip="Registro Presença" data-target="conteudo-presencas">
+          <i class="fas fa-calendar-check"></i><span class="link-text">Registro Presença</span>
+        </a>
+      </li>
+      <li>
+        <a href="javascript:void(0);" onclick="togglePresencas()" data-tooltip="Mostrar Tabela de Presença" data-target="conteudo-presencas">
+          <i class="fas fa-table"></i><span class="link-text">Mostrar Tabela de Presença</span>
+        </a>
+      </li>
+      <li>
+        <a href="javascript:void(0);" onclick="logout()" data-tooltip="Logout" data-target="conteudo-presencas">
+          <i class="fas fa-sign-out-alt"></i><span class="link-text">Logout</span>
+        </a>
+      </li>
+      <li>
+        <button id="gerar-pdf" data-tooltip="Gerar Relatório PDF" data-target="conteudo-presencas">
+          <i class="fas fa-file-pdf"></i><span class="link-text">Gerar Relatório PDF</span>
+        </button>
+      </li>
+      <li>
+        <button id="gerar-csv" data-tooltip="Gerar Relatório CSV" data-target="conteudo-presencas">
+          <i class="fas fa-file-csv"></i><span class="link-text">Gerar Relatório CSV</span>
+        </button>
+      </li>
+    </ul>
+    <div id="resizer"></div>
+  </div>
+
+
+
+
+  <!-- Main content -->
+  <div id="main-content">
+    <header>
+      <h1>Bem-vindo ao Sistema de Monitoria</h1>
+    </header>
 
     <main>
-      <h2>Lista de Presenças</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Horário</th>
-            <th>Nome do Aluno</th>
-            <th>Turma</th>
-            <th>Conteúdo</th>
-          </tr>
-        </thead>
-        <tbody id="tabela-presencas"></tbody>
-      </table>
+      <!-- Aqui irá aparecer o conteúdo carregado dinamicamente -->
+      <div id="conteudo"></div>
+
+      <!-- Tabela de Presenças (oculta por padrão) -->
+      <div id="conteudo-presencas" style="display: none;">
+        <h2>Lista de Presenças</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Horário</th>
+              <th>Nome do Aluno</th>
+              <th>Turma</th>
+              <th>Conteúdo</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-presencas"></tbody>
+        </table>
+      </div>
     </main>
 
+    <footer>
+      <p>&copy; 2025 Sistema de Monitoria</p>
+    </footer>
+  </div>
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const resizer = document.getElementById('resizer');
 
-    <script>
-      async function carregarPresencas() {
-        try {
-          const response = await fetch("/presencas/listar");
-          const presencas = await response.json();
+    let isResizing = false;
 
-          const tabela = document.getElementById("tabela-presencas");
-          tabela.innerHTML = ""; // limpa a tabela antes de adicionar novas linhas
+    resizer.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      sidebar.classList.add('resizing');
+      document.body.style.cursor = 'ew-resize';
+    });
 
-          presencas.forEach((p) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td>${p.data}</td>
-              <td>${p.horario}</td>
-              <td>${p.nome_aluno}</td>
-              <td>${p.turma}</td>
-              <td>${p.conteudo || '-'}</td>
-            `;
-            tabela.appendChild(row);
-          });
-        } catch (error) {
-          console.error("Erro ao carregar presenças:", error);
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      const newWidth = e.clientX;
+      if (newWidth > 60 && newWidth < 500) { // limites mínimos/máximos
+        sidebar.style.width = `${newWidth}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isResizing = false;
+      sidebar.classList.remove('resizing');
+      document.body.style.cursor = 'default';
+    });
+  </script>
+
+  <script>
+    // Função genérica para alternar entre mostrar e limpar a seção
+    function toggleSection(button) {
+      const targetId = button.getAttribute('data-target');
+      const targetDiv = document.getElementById(targetId);
+
+      // Verifica se a div existe
+      if (!targetDiv) return;
+
+      // Alterna entre mostrar e esconder a div
+      if (targetDiv.style.display === "none" || targetDiv.style.display === "") {
+        targetDiv.style.display = "block"; // Mostra a div
+        if (targetId === "conteudo-presencas") {
+          carregarPresencas(); // Carrega os dados de presença, se necessário
+        }
+      } else {
+        targetDiv.style.display = "none"; // Esconde a div
+        targetDiv.innerHTML = ""; // Limpa o conteúdo da div
+      }
+    }
+
+// Função para carregar conteúdo dinâmico das páginas
+function carregarConteudo(pagina) {
+  // Limpa o conteúdo da div antes de carregar a nova página
+  document.getElementById('conteudo').innerHTML = "";
+
+  // Carrega o conteúdo da nova página
+  fetch(pagina)
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('conteudo').innerHTML = data;
+    })
+    .catch(error => {
+      document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar a página: ${error}</p>`;
+    });
+}
+
+
+    // Função para alternar a visibilidade da tabela de presenças
+    function togglePresencas() {
+      const conteudoPresencas = document.getElementById("conteudo-presencas");
+
+      // Alterna entre mostrar e esconder a tabela
+      if (conteudoPresencas.style.display === "none") {
+        conteudoPresencas.style.display = "block";
+        carregarPresencas(); // Carregar as presenças quando mostrar
+      } else {
+        conteudoPresencas.style.display = "none";
+      }
+    }
+
+// Função para carregar as presenças e preencher a tabela
+async function carregarPresencas() {
+  try {
+    // Limpa o conteúdo da div 'conteudo' antes de carregar a tabela
+    document.getElementById('conteudo').innerHTML = "";
+
+    // Faz a requisição para obter os dados das presenças
+    const response = await fetch("/presencas/listar");  // A URL da API pode ser ajustada
+    const presencas = await response.json();
+
+    // Cria a tabela de presenças
+    const tabela = document.createElement("table");
+    tabela.id = "tabela-presencas";  // Define o ID para a tabela
+
+    // Adiciona o cabeçalho da tabela
+    const thead = document.createElement("thead");
+    thead.innerHTML = `
+      <tr>
+        <th>Data</th>
+        <th>Horário</th>
+        <th>Nome Aluno</th>
+        <th>Turma</th>
+        <th>Conteúdo</th>
+      </tr>
+    `;
+    tabela.appendChild(thead);
+
+    // Preenche a tabela com as presenças
+    const tbody = document.createElement("tbody");
+    presencas.forEach((p) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${p.data}</td>
+        <td>${p.horario}</td>
+        <td>${p.nome_aluno}</td>
+        <td>${p.turma}</td>
+        <td>${p.conteudo || '-'}</td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    // Adiciona o corpo da tabela
+    tabela.appendChild(tbody);
+
+    // Adiciona a tabela ao conteúdo da div 'conteudo'
+    document.getElementById('conteudo').appendChild(tabela);
+
+  } catch (error) {
+    console.error("Erro ao carregar presenças:", error);
+    document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar as presenças. Tente novamente mais tarde.</p>`;
+  }
+}
+
+
+    function logout() {
+      fetch('/logout', {
+        method: 'POST', // Método para a requisição de logout
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => {
+          if (response.ok) {
+            window.location.href = '/login.html'; // Redireciona para a página de login após logout
+          } else {
+            alert('Erro ao fazer logout');
+          }
+        })
+        .catch(error => {
+          console.error('Erro no logout:', error);
+          alert('Erro no logout');
+        });
+    }
+
+    document.getElementById('gerar-pdf').addEventListener('click', function () {
+      fetch('/gerar-relatorio/pdf', { method: 'GET' })
+        .then(response => response.blob())
+        .then(blob => {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'relatorio.pdf';
+          link.click();
+        })
+        .catch(error => console.error('Erro ao gerar relatório PDF:', error));
+    });
+
+    document.getElementById('gerar-csv').addEventListener('click', function () {
+      fetch('/gerar-relatorio/csv', { method: 'GET' })
+        .then(response => response.text())
+        .then(csv => {
+          const link = document.createElement('a');
+          link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+          link.download = 'relatorio.csv';
+          link.click();
+        })
+        .catch(error => console.error('Erro ao gerar relatório CSV:', error));
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      const newWidth = e.clientX;
+      if (newWidth > 60 && newWidth < 500) {
+        sidebar.style.width = `${newWidth}px`;
+
+        if (newWidth <= 200) {
+          sidebar.classList.add('collapsed');
+        } else {
+          sidebar.classList.remove('collapsed');
         }
       }
+    });
 
-      carregarPresencas();
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>

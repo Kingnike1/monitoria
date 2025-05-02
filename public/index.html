@@ -2,50 +2,68 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Painel do Monitor - Página Inicial</title>
-    <link rel="stylesheet" href="./css/index.css" />
+    <title>Login - Monitor</title>
+    <link rel="stylesheet" href="./css/cadastrar.css" />
   </head>
   <body>
-    <!-- Sidebar -->
-    <div id="sidebar">
-      <h2>Menu</h2>
-      <ul>
-        <li><a href="javascript:void(0);" onclick="carregarConteudo('cadastrar.html')">Cadastrar Monitor</a></li>
-        <li><a href="javascript:void(0);" onclick="carregarConteudo('login.html')">Login</a></li>
-        <li><a href="monitor.html">Painel do Monitor</a></li>
-        <li><a href="registro_presenca.html" target="_blank">Registro de Presença</a></li>
-      </ul>
-    </div>
 
-    <!-- Main content -->
-    <div id="main-content">
-      <header>
-        <h1>Bem-vindo ao Sistema de Monitoria</h1>
-      </header>
+    <main>
+      <div class="container">
+        <h2>Login</h2>
+        <form id="login-form">
+          <div>
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" placeholder="Digite seu e-mail" required />
+          </div>
+          <div>
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" placeholder="Digite sua senha" required />
+          </div>
+          <div>
+            <button type="submit">Entrar</button>
+          </div>
+        </form>
+        
+        <div id="mensagem"></div>
 
-      <main>
-        <div id="conteudo"></div>
-      </main>
-
-      <footer>
-        <p>&copy; 2025 Sistema de Monitoria</p>
-      </footer>
-    </div>
+        <!-- Botão de cadastro -->
+        <div class="signup-link">
+          <p>Não tem uma conta?</p>
+          <button id="cadastrar-btn" onclick="window.location.href = 'cadastrar.html';">Cadastrar</button>
+        </div>
+      </div>
+    </main>
 
     <script>
-      function carregarConteudo(pagina) {
-        // Faz uma requisição para carregar o conteúdo da página solicitada
-        fetch(pagina)
-          .then(response => response.text())
-          .then(data => {
-            // Atualiza a div com o conteúdo da página
-            document.getElementById('conteudo').innerHTML = data;
-          })
-          .catch(error => {
-            // Em caso de erro, exibe uma mensagem de erro
-            document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar a página: ${error}</p>`;
-          });
-      }
+      document.getElementById('login-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, senha }),
+        });
+
+        const result = await response.json();
+        const mensagemDiv = document.getElementById('mensagem');
+
+        if (response.ok) {
+          mensagemDiv.style.color = 'green';
+          mensagemDiv.innerHTML = 'Login bem-sucedido! Redirecionando...';
+          window.location.href = '/monitor.html'; // Redireciona para o painel do monitor
+        } else {
+          mensagemDiv.style.color = 'red';
+          mensagemDiv.innerHTML = result.error || 'Erro ao fazer login. Tente novamente.';
+        }
+      });
     </script>
+
+
+
   </body>
 </html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Painel do Monitor - Página Inicial</title>
+    <link rel="stylesheet" href="./css/index.css" />
+    <link rel="stylesheet" href="./css/monitor.css">
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <h2>Menu</h2>
+      <ul>
+        <li><a href="javascript:void(0);" onclick="carregarConteudo('cadastrar.html')">Cadastrar Monitor</a></li>
+        <li><a href="javascript:void(0);" onclick="carregarConteudo('login.html')">Login</a></li>
+        <li><a href="registro_presenca.html" target="_blank">Registro Presenca</a></li>
+        <li><a href="javascript:void(0);" onclick="togglePresencas()">Mostrar Tabela de Presença</a></li>
+      </ul>
+    </div>
+
+    <!-- Main content -->
+    <div id="main-content">
+      <header>
+        <h1>Bem-vindo ao Sistema de Monitoria</h1>
+      </header>
+
+      <main>
+        <!-- Aqui irá aparecer o conteúdo carregado dinamicamente -->
+        <div id="conteudo"></div>
+
+        <!-- Tabela de Presenças (oculta por padrão) -->
+        <div id="conteudo-presencas" style="display: none;">
+          <h2>Lista de Presenças</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Nome do Aluno</th>
+                <th>Turma</th>
+                <th>Conteúdo</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-presencas"></tbody>
+          </table>
+        </div>
+      </main>
+
+      <footer>
+        <p>&copy; 2025 Sistema de Monitoria</p>
+      </footer>
+    </div>
+
+    <script>
+      // Função para carregar conteúdo dinâmico das páginas
+      function carregarConteudo(pagina) {
+        fetch(pagina)
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('conteudo').innerHTML = data;
+          })
+          .catch(error => {
+            document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar a página: ${error}</p>`;
+          });
+      }
+
+      // Função para alternar a visibilidade da tabela de presenças
+      function togglePresencas() {
+        const conteudoPresencas = document.getElementById("conteudo-presencas");
+
+        // Alterna entre mostrar e esconder a tabela
+        if (conteudoPresencas.style.display === "none") {
+          conteudoPresencas.style.display = "block";
+          carregarPresencas(); // Carregar as presenças quando mostrar
+        } else {
+          conteudoPresencas.style.display = "none";
+        }
+      }
+
+      // Função para carregar as presenças e preencher a tabela
+      async function carregarPresencas() {
+        try {
+          const response = await fetch("/presencas/listar");  // A URL da API pode ser ajustada
+          const presencas = await response.json();
+
+          const tabela = document.getElementById("tabela-presencas");
+          tabela.innerHTML = ""; // Limpa a tabela antes de adicionar novos dados
+
+          presencas.forEach((p) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${p.data}</td>
+              <td>${p.horario}</td>
+              <td>${p.nome_aluno}</td>
+              <td>${p.turma}</td>
+              <td>${p.conteudo || '-'}</td>
+            `;
+            tabela.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Erro ao carregar presenças:", error);
+        }
+      }
+    </script>
+  </body>
+</html>
