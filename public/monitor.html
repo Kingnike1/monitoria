@@ -5,70 +5,58 @@
   <meta charset="UTF-8" />
   <title>Painel do Monitor - Página Inicial</title>
   <link rel="stylesheet" href="./css/index.css" />
-  <link rel="stylesheet" href="./css/monitor.css">
-  <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="./css/monitor.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-  <!-- Sidebar -->
   <!-- Sidebar -->
   <div id="sidebar">
     <h2>Menu</h2>
     <ul>
       <li>
-        <a href="javascript:void(0);" onclick="carregarConteudo('cadastrar.html')" onclick="togglePresencas()"
-          data-tooltip="Cadastrar Monitor" data-target="conteudo-presencas">
-          <i class="fas fa-user-plus"></i><span class="link-text">Cadastrar Monitor</span>
-        </a>
-      </li>
-      <li>
-        <a href="javascript:void(0);" onclick="carregarConteudo('index.html')" onclick="togglePresencas()"
-          data-tooltip="Login" data-target="conteudo-presencas">
-          <i class="fas fa-sign-in-alt"></i><span class="link-text">Login</span>
-        </a>
-      </li>
-      <li>
-        <a href="registro_presenca.html" target="_blank" data-tooltip="Registro Presença" data-target="conteudo-presencas">
+        <a href="registro_presenca.html" target="_blank" data-tooltip="Registro Presença">
           <i class="fas fa-calendar-check"></i><span class="link-text">Registro Presença</span>
         </a>
       </li>
       <li>
-        <a href="javascript:void(0);" onclick="togglePresencas()" data-tooltip="Mostrar Tabela de Presença" data-target="conteudo-presencas">
+        <a href="javascript:void(0);" onclick="togglePresencas()" data-tooltip="Mostrar Tabela de Presença">
           <i class="fas fa-table"></i><span class="link-text">Mostrar Tabela de Presença</span>
         </a>
       </li>
       <li>
-        <a href="javascript:void(0);" onclick="logout()" data-tooltip="Logout" data-target="conteudo-presencas">
-          <i class="fas fa-sign-out-alt"></i><span class="link-text">Logout</span>
+        <a href="javascript:void(0);" onclick="toggleGrafico()" data-tooltip="Visualizar Gráficos">
+          <i class="fas fa-chart-bar"></i><span class="link-text">Visualizar Gráficos</span>
         </a>
       </li>
+
       <li>
-        <button id="gerar-pdf" data-tooltip="Gerar Relatório PDF" data-target="conteudo-presencas">
+        <button id="gerar-pdf" data-tooltip="Gerar Relatório PDF">
           <i class="fas fa-file-pdf"></i><span class="link-text">Gerar Relatório PDF</span>
         </button>
       </li>
       <li>
-        <button id="gerar-csv" data-tooltip="Gerar Relatório CSV" data-target="conteudo-presencas">
+        <button id="gerar-csv" data-tooltip="Gerar Relatório CSV">
           <i class="fas fa-file-csv"></i><span class="link-text">Gerar Relatório CSV</span>
         </button>
+      </li>
+      <li>
+        <a href="javascript:void(0);" onclick="logout()" data-tooltip="Logout">
+          <i class="fas fa-sign-out-alt"></i><span class="link-text">Logout</span>
+        </a>
       </li>
     </ul>
     <div id="resizer"></div>
   </div>
 
-
-
-
-  <!-- Main content -->
+  <!-- Main Content -->
   <div id="main-content">
     <header>
       <h1>Bem-vindo ao Sistema de Monitoria</h1>
     </header>
 
     <main>
-      <!-- Aqui irá aparecer o conteúdo carregado dinamicamente -->
       <div id="conteudo"></div>
 
       <!-- Tabela de Presenças (oculta por padrão) -->
@@ -87,12 +75,26 @@
           <tbody id="tabela-presencas"></tbody>
         </table>
       </div>
+
+      <!-- Div que irá mostrar os gráficos -->
+      <div id="conteudo-graficos" style="display: none;">
+        <div class="charts-wrapper">
+          <div class="chart-box">
+            <canvas id="graficoPresencasPorData"></canvas>
+          </div>
+          <div class="chart-box">
+            <canvas id="graficoPresencasPorTurma"></canvas>
+          </div>
+        </div>
+      </div>
     </main>
 
     <footer>
       <p>&copy; 2025 Sistema de Monitoria</p>
     </footer>
   </div>
+
+  <!-- Scripts -->
   <script>
     const sidebar = document.getElementById('sidebar');
     const resizer = document.getElementById('resizer');
@@ -118,123 +120,190 @@
       sidebar.classList.remove('resizing');
       document.body.style.cursor = 'default';
     });
+    document.addEventListener('mousemove', (e) => {
+  if (!isResizing) return;
+  const newWidth = e.clientX;
+  if (newWidth > 60 && newWidth < 500) {
+    sidebar.style.width = `${newWidth}px`;
+
+    if (newWidth <= 200) {
+      sidebar.classList.add('collapsed');
+    } else {
+      sidebar.classList.remove('collapsed');
+    }
+  }
+});
   </script>
-
   <script>
-    // Função genérica para alternar entre mostrar e limpar a seção
-    function toggleSection(button) {
-      const targetId = button.getAttribute('data-target');
-      const targetDiv = document.getElementById(targetId);
+    // Variável global para verificar se os gráficos já foram carregados
+    let graficosCarregados = false;
 
-      // Verifica se a div existe
-      if (!targetDiv) return;
+    // Função para alternar a visibilidade da seção de gráficos
+    function toggleGrafico() {
+      const conteudoGrafico = document.getElementById("conteudo-graficos");
 
-      // Alterna entre mostrar e esconder a div
-      if (targetDiv.style.display === "none" || targetDiv.style.display === "") {
-        targetDiv.style.display = "block"; // Mostra a div
-        if (targetId === "conteudo-presencas") {
-          carregarPresencas(); // Carrega os dados de presença, se necessário
+      // Alterna entre mostrar e esconder a div de gráficos
+      if (conteudoGrafico.style.display === "none") {
+        conteudoGrafico.style.display = "block";
+        
+        // Carrega os gráficos apenas uma vez
+        if (!graficosCarregados) {
+          carregarGraficoPresencas(); // Carregar os gráficos
+          graficosCarregados = true; // Marcar que os gráficos foram carregados
         }
       } else {
-        targetDiv.style.display = "none"; // Esconde a div
-        targetDiv.innerHTML = ""; // Limpa o conteúdo da div
+        conteudoGrafico.style.display = "none";
       }
     }
 
-// Função para carregar conteúdo dinâmico das páginas
-function carregarConteudo(pagina) {
-  // Limpa o conteúdo da div antes de carregar a nova página
-  document.getElementById('conteudo').innerHTML = "";
-
-  // Carrega o conteúdo da nova página
-  fetch(pagina)
-    .then(response => response.text())
+    // Função para carregar os gráficos
+    function carregarGraficoPresencas() {
+  // Fazer uma requisição para obter os dados de presenças
+  fetch('http://localhost:3000/presencas/listar')
+    .then(response => response.json()) // Transformar a resposta em JSON
     .then(data => {
-      document.getElementById('conteudo').innerHTML = data;
+      // Preparar os dados para o gráfico
+      const datas = [];
+      const qtdPorData = [];
+      const turmas = [];
+      const qtdPorTurma = [];
+
+      // Organizar os dados por data e turma
+      data.forEach(item => {
+        // Processar a data (convertendo para formato mais simples)
+        const dataFormatada = new Date(item.data).toLocaleDateString();
+
+        // Adiciona a data ao gráfico de presenças por dia
+        if (!datas.includes(dataFormatada)) {
+          datas.push(dataFormatada);
+          qtdPorData.push(0); // Inicializa a quantidade de presenças
+        }
+
+        // Incrementa a quantidade de presenças para a data correspondente
+        const indexData = datas.indexOf(dataFormatada);
+        qtdPorData[indexData]++;
+
+        // Adiciona a turma ao gráfico de presenças por turma
+        if (!turmas.includes(item.turma)) {
+          turmas.push(item.turma);
+          qtdPorTurma.push(0); // Inicializa a quantidade de presenças por turma
+        }
+
+        // Incrementa a quantidade de presenças para a turma correspondente
+        const indexTurma = turmas.indexOf(item.turma);
+        qtdPorTurma[indexTurma]++;
+      });
+
+      // Gráfico de presenças por data (linha)
+      const ctx1 = document.getElementById('graficoPresencasPorData').getContext('2d');
+      new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: datas,
+          datasets: [{
+            label: 'Presenças por Dia',
+            data: qtdPorData,
+            fill: false,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Presenças por Dia'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Gráfico de presenças por turma (barras)
+      const ctx2 = document.getElementById('graficoPresencasPorTurma').getContext('2d');
+      new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: turmas,
+          datasets: [{
+            label: 'Presenças por Turma',
+            data: qtdPorTurma,
+            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Presenças por Turma'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
     })
     .catch(error => {
-      document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar a página: ${error}</p>`;
+      console.error('Erro ao carregar os dados de presenças:', error);
     });
 }
 
-
-    // Função para alternar a visibilidade da tabela de presenças
     function togglePresencas() {
-      const conteudoPresencas = document.getElementById("conteudo-presencas");
-
-      // Alterna entre mostrar e esconder a tabela
-      if (conteudoPresencas.style.display === "none") {
-        conteudoPresencas.style.display = "block";
-        carregarPresencas(); // Carregar as presenças quando mostrar
+      const div = document.getElementById("conteudo-presencas");
+      if (div.style.display === "none") {
+        div.style.display = "block";
+        carregarPresencas();
       } else {
-        conteudoPresencas.style.display = "none";
+        div.style.display = "none";
       }
     }
 
-// Função para carregar as presenças e preencher a tabela
-async function carregarPresencas() {
-  try {
-    // Limpa o conteúdo da div 'conteudo' antes de carregar a tabela
-    document.getElementById('conteudo').innerHTML = "";
+    // Carregar presenças na tabela
+    async function carregarPresencas() {
+      try {
+        document.getElementById('conteudo').innerHTML = "";
+        const response = await fetch("/presencas/listar");
+        const presencas = await response.json();
 
-    // Faz a requisição para obter os dados das presenças
-    const response = await fetch("/presencas/listar");  // A URL da API pode ser ajustada
-    const presencas = await response.json();
+        const tbody = document.getElementById("tabela-presencas");
+        tbody.innerHTML = "";
+        presencas.forEach((p) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${p.data}</td>
+            <td>${p.horario}</td>
+            <td>${p.nome_aluno}</td>
+            <td>${p.turma}</td>
+            <td>${p.conteudo || '-'}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Erro ao carregar presenças:", error);
+        document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar as presenças.</p>`;
+      }
+    }
 
-    // Cria a tabela de presenças
-    const tabela = document.createElement("table");
-    tabela.id = "tabela-presencas";  // Define o ID para a tabela
-
-    // Adiciona o cabeçalho da tabela
-    const thead = document.createElement("thead");
-    thead.innerHTML = `
-      <tr>
-        <th>Data</th>
-        <th>Horário</th>
-        <th>Nome Aluno</th>
-        <th>Turma</th>
-        <th>Conteúdo</th>
-      </tr>
-    `;
-    tabela.appendChild(thead);
-
-    // Preenche a tabela com as presenças
-    const tbody = document.createElement("tbody");
-    presencas.forEach((p) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${p.data}</td>
-        <td>${p.horario}</td>
-        <td>${p.nome_aluno}</td>
-        <td>${p.turma}</td>
-        <td>${p.conteudo || '-'}</td>
-      `;
-      tbody.appendChild(row);
-    });
-
-    // Adiciona o corpo da tabela
-    tabela.appendChild(tbody);
-
-    // Adiciona a tabela ao conteúdo da div 'conteudo'
-    document.getElementById('conteudo').appendChild(tabela);
-
-  } catch (error) {
-    console.error("Erro ao carregar presenças:", error);
-    document.getElementById('conteudo').innerHTML = `<p>Erro ao carregar as presenças. Tente novamente mais tarde.</p>`;
-  }
-}
-
-
+    // Logout
     function logout() {
       fetch('/logout', {
-        method: 'POST', // Método para a requisição de logout
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
       })
         .then(response => {
           if (response.ok) {
-            window.location.href = '/login.html'; // Redireciona para a página de login após logout
+            window.location.href = '/login.html';
           } else {
             alert('Erro ao fazer logout');
           }
@@ -245,8 +314,9 @@ async function carregarPresencas() {
         });
     }
 
-    document.getElementById('gerar-pdf').addEventListener('click', function () {
-      fetch('/gerar-relatorio/pdf', { method: 'GET' })
+    // Gerar PDF
+    document.getElementById('gerar-pdf').addEventListener('click', () => {
+      fetch('/gerar-relatorio/pdf')
         .then(response => response.blob())
         .then(blob => {
           const link = document.createElement('a');
@@ -257,8 +327,9 @@ async function carregarPresencas() {
         .catch(error => console.error('Erro ao gerar relatório PDF:', error));
     });
 
-    document.getElementById('gerar-csv').addEventListener('click', function () {
-      fetch('/gerar-relatorio/csv', { method: 'GET' })
+    // Gerar CSV
+    document.getElementById('gerar-csv').addEventListener('click', () => {
+      fetch('/gerar-relatorio/csv')
         .then(response => response.text())
         .then(csv => {
           const link = document.createElement('a');
@@ -268,21 +339,6 @@ async function carregarPresencas() {
         })
         .catch(error => console.error('Erro ao gerar relatório CSV:', error));
     });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isResizing) return;
-      const newWidth = e.clientX;
-      if (newWidth > 60 && newWidth < 500) {
-        sidebar.style.width = `${newWidth}px`;
-
-        if (newWidth <= 200) {
-          sidebar.classList.add('collapsed');
-        } else {
-          sidebar.classList.remove('collapsed');
-        }
-      }
-    });
-
   </script>
 </body>
 

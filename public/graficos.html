@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gráficos de Presença - Monitoria</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+
+        .charts-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .chart-box {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            flex: 1 1 45%;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        @media (max-width: 768px) {
+            .charts-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .chart-box {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Gráficos de Presença</h1>
+
+    <div class="charts-wrapper">
+        <div class="chart-box">
+            <canvas id="graficoPresencasPorTurma"></canvas>
+        </div>
+    </div>
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const resizer = document.getElementById('resizer');
+    
+        let isResizing = false;
+    
+        resizer.addEventListener('mousedown', (e) => {
+          isResizing = true;
+          sidebar.classList.add('resizing');
+          document.body.style.cursor = 'ew-resize';
+        });
+    
+        document.addEventListener('mousemove', (e) => {
+          if (!isResizing) return;
+          const newWidth = e.clientX;
+          if (newWidth > 60 && newWidth < 500) { // limites mínimos/máximos
+            sidebar.style.width = `${newWidth}px`;
+          }
+        });
+    
+        document.addEventListener('mouseup', () => {
+          isResizing = false;
+          sidebar.classList.remove('resizing');
+          document.body.style.cursor = 'default';
+        });
+        document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      const newWidth = e.clientX;
+      if (newWidth > 60 && newWidth < 500) {
+        sidebar.style.width = `${newWidth}px`;
+
+        if (newWidth <= 200) {
+          sidebar.classList.add('collapsed');
+        } else {
+          sidebar.classList.remove('collapsed');
+        }
+      }
+    });
+      </script>
+    <script>
+        
+        async function carregarGraficos() {
+            try {
+                const resposta = await fetch("/presencas/listar");
+                const presencas = await resposta.json();
+
+                const porData = {};
+                const porTurma = {};
+
+                presencas.forEach(p => {
+                    porData[p.data] = (porData[p.data] || 0) + 1;
+                    porTurma[p.turma] = (porTurma[p.turma] || 0) + 1;
+                });
+
+                const datas = Object.keys(porData);
+                const qtdPorData = Object.values(porData);
+
+                const turmas = Object.keys(porTurma);
+                const qtdPorTurma = Object.values(porTurma);
+
+
+
+                // Gráfico por turma
+                const ctx2 = document.getElementById('graficoPresencasPorTurma').getContext('2d');
+                new Chart(ctx2, {
+                    type: 'pie',
+                    data: {
+                        labels: turmas,
+                        datasets: [{
+                            label: 'Presenças por Turma',
+                            data: qtdPorTurma,
+                            backgroundColor: turmas.map((_, i) => `hsl(${i * 60}, 70%, 60%)`)
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Presenças por Turma'
+                            }
+                        }
+                    }
+                });
+
+            } catch (erro) {
+                console.error("Erro ao carregar dados para gráficos:", erro);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarGraficos);
+    </script>
+</body>
+
+</html>
