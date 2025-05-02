@@ -205,81 +205,177 @@ input:focus, select:focus, textarea:focus {
   outline: none;
 }
 
-/* ===================== BOTÕES ===================== */
-button {
-  background-color: #2980b9;
-  color: #fff;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #3498db;
-  transform: scale(1.05);
-}
-
-button:active {
-  background-color: #1abc9c;
-  transform: scale(0.98);
-}
-
 /* ===================== TABELAS ===================== */
+/* Estilo da tabela */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 30px;
-  background-color: #fff;
+  margin-top: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
+/* Cabeçalhos da tabela */
 th {
-  background-color: #2980b9;
-  color: white;
-  padding: 15px;
+  background-color: #0056b3;
+  color: #fff;
+  padding: 16px;
   text-align: left;
   font-size: 18px;
   font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
-}
-
-th:hover {
-  background-color: #3498db;
-}
-
-td {
-  padding: 15px;
-  border-bottom: 1px solid #eee;
-  font-size: 15px;
-  color: #7f8c8d;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
+th:hover {
+  background-color: #004085;
+}
+
+/* Células da tabela */
+td {
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 15px;
+  text-align: left;
+  color: #495057;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo das linhas alternadas */
 tr:nth-child(even) {
-  background-color: #f8f9fa;
+  background-color: #f7f9fc;
 }
 
+tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Hover nas linhas */
 tr:hover td {
-  background-color: #dce1e6;
+  background-color: #f1f5f8;
+  cursor: pointer;
   transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
 }
 
-/* Mensagem de tabela vazia */
+/* Foco nas células quando interagindo */
+td:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 3px;
+}
+
+/* Estilo para a tabela vazia */
 #tabela-presencas {
   text-align: center;
   font-style: italic;
-  color: #7f8c8d;
+  color: #6c757d;
   padding: 20px;
 }
 
+/* Adicionando bordas arredondadas e efeitos de hover para a tabela */
+table th, table td {
+  border-radius: 8px;
+}
+
+/* Sombra na tabela */
+table {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo de carregamento para tabela */
 #tabela-presencas:empty {
-  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: #6c757d;
   font-weight: 600;
-  background-color: #f8f9fa;
+  background-color: #f7f9fc;
+
+}
+/* ===================== GRAFICO ===================== */
+
+.charts-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.chart-box {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  flex: 1 1 45%;
+}
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+#conteudo-graficos {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+/* ===================== MENU ===================== */
+/* From Uiverse.io by satyamchaudharydev */ 
+/* === removing default button style ===*/
+:root{
+  --border-right: 6px;
+  --text-stroke-color: rgba(0, 0, 0, 0.6);
+  --animation-color: #37FF8B;
+  --fs-size: 2em;
+}
+
+.button {
+  margin: 0;
+  height: auto;
+  background: transparent;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+/* button styling */
+.button {
+  letter-spacing: 3px;
+  text-decoration: none;
+  font-size: var(--fs-size);
+  font-family: "Arial";
+  position: relative;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-stroke-color);
+}
+/* this is the text, when you hover on button */
+.hover-text {
+  position: absolute;
+  box-sizing: border-box;
+  content: attr(data-text);
+  color: var(--animation-color);
+  width: 0%;
+  inset: 0;
+  border-right: var(--border-right) solid var(--animation-color);
+  overflow: hidden;
+  transition: 0.5s;
+  -webkit-text-stroke: 1px var(--animation-color);
+}
+/* hover */
+.button:hover .hover-text {
+  width: 100%;
+  filter: drop-shadow(0 0 23px var(--animation-color))
 }
 
 /* ===================== RODAPÉ ===================== */
@@ -321,5 +417,16 @@ footer {
 
   input, select, textarea {
     font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-wrapper {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .chart-box {
+      max-width: 100%;
   }
 }
