@@ -62,7 +62,7 @@ router.post('/registrar', async (req, res) => {
 
 
 
-// Rota para obter todas as presenças
+// Rota para obter todas as presenças com data e hora formatadas
 router.get('/listar', (req, res) => {
   const query = `
     SELECT 
@@ -83,9 +83,21 @@ router.get('/listar', (req, res) => {
       console.error('Erro no MySQL:', err);
       return res.status(500).json({ error: 'Erro ao buscar presenças' });
     }
-    res.json(resultados);
+
+    // Formatar a data e o horário
+    const presencasFormatadas = resultados.map(presenca => {
+      const dataObj = new Date(presenca.data);
+      return {
+        ...presenca,
+        data: dataObj.toLocaleDateString('pt-BR'), // ex: 05/05/2025
+        horario: presenca.horario.slice(0, 5) // ex: 15:00
+      };
+    });
+
+    res.json(presencasFormatadas);
   });
 });
+
 
 // Rota para listar monitores
 router.get('/listar/monitor', (req, res) => {

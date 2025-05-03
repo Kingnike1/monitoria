@@ -194,6 +194,7 @@ async function carregarPresencas() {
         <td>${p.horario}</td>
         <td>${p.nome_aluno}</td>
         <td>${p.turma}</td>
+        <td>${p.nome_monitor}</td>
         <td>${p.conteudo || "-"}</td>
       `;
       tbody.appendChild(row);

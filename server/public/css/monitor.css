@@ -45,96 +45,57 @@
   width: 100%;
   filter: drop-shadow(0 0 23px var(--animation-color))
 }
-/* Estilo da tabela */
-table {
+/* Estilização principal da tabela */
+.table-premium {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-  border-radius: 8px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #fff;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Cabeçalhos da tabela */
-th {
-  background-color: #0056b3;
+/* Cabeçalho da tabela */
+.table-premium thead {
+  background-color: #003366;
   color: #fff;
-  padding: 16px;
+}
+
+.table-premium th {
+  padding: 1rem;
   text-align: left;
-  font-size: 18px;
   font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+  border-bottom: 2px solid #004080;
+}
+
+/* Linhas da tabela */
+.table-premium td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.93rem;
+  vertical-align: middle;
+}
+
+/* Efeito zebrado */
+.table-premium tbody tr:nth-child(odd) {
+  background-color: #f9fafb;
+}
+
+/* Hover com animação */
+.table-premium tbody tr:hover {
+  background-color: #edf2f7;
   transition: background-color 0.3s ease;
 }
 
-th:hover {
-  background-color: #004085;
-}
-
-/* Células da tabela */
-td {
-  padding: 16px;
-  border-bottom: 1px solid #e9ecef;
-  font-size: 15px;
-  text-align: left;
-  color: #495057;
-  transition: background-color 0.3s ease;
-}
-
-/* Estilo das linhas alternadas */
-tr:nth-child(even) {
-  background-color: #f7f9fc;
-}
-
-tr:nth-child(odd) {
-  background-color: #ffffff;
-}
-
-/* Hover nas linhas */
-tr:hover td {
-  background-color: #f1f5f8;
-  cursor: pointer;
-  transform: translateY(-2px);
-  transition: transform 0.2s ease-in-out;
-}
-
-/* Foco nas células quando interagindo */
-td:focus {
-  outline: 2px solid #007bff;
-  outline-offset: 3px;
-}
-
-/* Estilo para a tabela vazia */
-#tabela-presencas {
-  text-align: center;
-  font-style: italic;
-  color: #6c757d;
-  padding: 20px;
-}
-
-/* Adicionando bordas arredondadas e efeitos de hover para a tabela */
-table th, table td {
-  border-radius: 8px;
-}
-
-/* Sombra na tabela */
-table {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilo de carregamento para tabela */
-#tabela-presencas:empty {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  font-size: 16px;
-  color: #6c757d;
-  font-weight: 600;
-  background-color: #f7f9fc;
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .table-premium {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }
 .charts-wrapper {
   display: flex;
