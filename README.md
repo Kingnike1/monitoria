@@ -72,7 +72,7 @@ http://localhost:3000
 * Host: `localhost`
 * Porta: `3306`
 * Usuário: `root`
-* Senha: `123456`
+* Senha: `123`
 * Banco: `monitoria`
 
 > Use o arquivo `banco.sql` para importar as tabelas e dados iniciais.
