@@ -390,7 +390,7 @@
     </div>
   </div>
 
-  <script src="js/index.js"></script>
+  <script src="../public/js/index.js"></script>
 
   <script>
 
@@ -453,7 +453,7 @@
         if (response.ok) {
           exibirModal('Login bem-sucedido! Redirecionando...', true);
           setTimeout(() => {
-            window.location.href = '/monitor.html';
+            window.location.href = '/monitor';
           }, 1500);
         } else {
           exibirModal(result.error || 'Erro ao fazer login. Tente novamente.', false);

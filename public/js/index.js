@@ -58,7 +58,7 @@ document
     if (response.ok) {
       exibirModal("Login bem-sucedido! Redirecionando...", true);
       setTimeout(() => {
-        window.location.href = "/monitor.html";
+        window.location.href = "/monitor";
       }, 1500);
     } else {
       exibirModal(
