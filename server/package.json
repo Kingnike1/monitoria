@@ -1,0 +1,34 @@
+{
+  "name": "monitoria",
+  "version": "1.0.0",
+  "description": "Sistema para registrar a presença dos alunos nas monitorias, armazenando nome, turma, horário e conteúdo ensinado. Permite validação dos registros pelo monitor e geração de relatórios.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kingnike1/monitoria.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kingnike1/monitoria/issues"
+  },
+  "homepage": "https://github.com/Kingnike1/monitoria#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "json2csv": "^6.0.0-alpha.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.1",
+    "pdfkit": "^0.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}

@@ -2,7 +2,6 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
-const fs = require('fs');
 const presencaRoutes = require('./routes/presenca');
 const bcrypt = require('bcryptjs');
 const db = require('./config/db');
@@ -12,12 +11,32 @@ const { parse } = require('json2csv');
 const app = express();
 const port = 3000;
 
+// Serve arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  console.log(`Requisitado: ${req.url}`);
+  next();
+});
+
+
+// Cabeçalho de segurança (opcional, mas recomendado)
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+});
+
+
 // Configurar sessões
 app.use(session({
   secret: 'secret-key',
   resave: false,
   saveUninitialized: false
 }));
+
+// Middleware para ler JSON e form data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Middleware de autenticação
 function verificarAutenticacao(req, res, next) {
@@ -31,29 +50,23 @@ function verificarAutenticacao(req, res, next) {
   next();
 }
 
-// Middleware para ler JSON e servir arquivos estáticos
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use('/css', express.static(path.join(__dirname, '..', 'public', 'css')));
-app.use('/js', express.static(path.join(__dirname, '..', 'public', 'js')));
-
 // Página inicial (login)
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
 // Página protegida (monitor)
 app.get('/monitor', verificarAutenticacao, (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'views', 'monitor.html'));
+  res.sendFile(path.join(__dirname, 'views', 'monitor.html'));
 });
-// Página protegida (monitor)
+
+// Página protegida (registro)
 app.get('/registro', verificarAutenticacao, (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'views', 'registro_presenca.html'));
+  res.sendFile(path.join(__dirname, 'views', 'registro_presenca.html'));
 });
 
 // Rotas protegidas de presença
 app.use('/presencas', verificarAutenticacao, presencaRoutes);
-
 
 // Login
 app.post('/login', async (req, res) => {
@@ -68,7 +81,7 @@ app.post('/login', async (req, res) => {
   }
 
   db.query('SELECT * FROM monitores WHERE email = ?', [email], async (err, results) => {
-    if (err) return res.status(500).json({ error: 'Erro ao buscar monitor' });
+    if (err) return res.status(500).json({ error: 'Erro ao buscar monitor.' });
 
     if (results.length === 0) {
       return res.status(401).json({ error: 'Email não encontrado.' });
@@ -88,6 +101,7 @@ app.post('/login', async (req, res) => {
   });
 });
 
+// Logout
 app.get('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
@@ -96,6 +110,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
   });
 });
+
 // Cadastro
 app.post('/cadastrar', async (req, res) => {
   if (req.session.monitorId) {
@@ -104,26 +119,24 @@ app.post('/cadastrar', async (req, res) => {
 
   const { nome, email, senha } = req.body;
 
-  if (!email || !senha) {
+  if (!nome || !email || !senha) {
     return res.status(400).json({ error: 'Por favor, preencha todos os campos.' });
   }
 
   if (!email.endsWith('@monitora.com')) {
-    return res.status(400).json({
-      error: 'O e-mail deve terminar com @monitora.com'
-    });
+    return res.status(400).json({ error: 'O e-mail deve terminar com @monitora.com' });
   }
 
   const senhaCriptografada = await bcrypt.hash(senha, 10);
 
   db.query('INSERT INTO monitores (nome, email, senha) VALUES (?, ?, ?)', [nome, email, senhaCriptografada], (err) => {
-    if (err) return res.status(500).json({ error: 'Erro ao cadastrar monitor' });
+    if (err) return res.status(500).json({ error: 'Erro ao cadastrar monitor.' });
 
     res.json({ message: 'Monitor cadastrado com sucesso!' });
   });
 });
 
-// Relatório PDF (autenticado)
+// Relatório PDF
 app.get('/gerar-relatorio/pdf', verificarAutenticacao, (req, res) => {
   db.query('SELECT * FROM presencas ORDER BY data DESC, horario DESC', (err, presencas) => {
     if (err) {
@@ -147,7 +160,7 @@ app.get('/gerar-relatorio/pdf', verificarAutenticacao, (req, res) => {
   });
 });
 
-// Relatório CSV (autenticado)
+// Relatório CSV
 app.get('/gerar-relatorio/csv', verificarAutenticacao, (req, res) => {
   db.query('SELECT * FROM presencas ORDER BY data DESC, horario DESC', (err, presencas) => {
     if (err) {
