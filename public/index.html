@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Presença</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       display: grid;
@@ -233,6 +233,100 @@
       cursor: pointer;
       color: #333;
     }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      transform: scale(0.9);
+      animation: scaleIn 0.3s ease forwards;
+      margin-left: 424px;
+      margin-top: 127px;
+    }
+
+    .modal-content p {
+      font-size: 18px;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    .fechar-modal {
+      color: #666;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .fechar-modal:hover {
+      color: #e74c3c;
+    }
+
+    /* Ícone animado */
+    .modal-icone {
+      font-size: 48px;
+      color: #2ecc71;
+      /* Verde para sucesso */
+      animation: bounce 1s ease;
+    }
+
+    /* Animações */
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      to {
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
   </style>
 </head>
 
@@ -286,8 +380,17 @@
       <button onclick="document.getElementById('formToggle').click()">Trocar para <span id="modo">Cadastro</span></button>
     </div> -->
 
-  <!-- Mensagem de erro ou sucesso -->
-  <div id="mensagem" style="text-align: center; margin-top: 230px;"></div>
+  <div id="modalMensagem" class="modal">
+    <div class="modal-content animate">
+      <span class="fechar-modal" id="fecharModal">&times;</span>
+      <div class="modal-icone">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <p id="textoMensagem"></p>
+    </div>
+  </div>
+
+  <script src="js/index.js"></script>
 
   <script>
 
@@ -318,45 +421,45 @@
       const mensagemDiv = document.getElementById('mensagem');
 
       if (response.ok) {
-        mensagemDiv.style.color = 'green';
-        mensagemDiv.innerHTML = 'Monitor cadastrado com sucesso!';
+        exibirModal('Monitor cadastrado com sucesso!', true);
         toggleCheckbox.checked = false;
         modoTexto.textContent = 'Cadastro';
       } else {
-        mensagemDiv.style.color = 'red';
-        mensagemDiv.innerHTML = result.error || 'Erro desconhecido. Tente novamente.';
+        exibirModal(result.error || 'Erro desconhecido. Tente novamente.', false);
       }
+
     });
 
     // Login
-    document.getElementById('login-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    document
+      .getElementById('login-form')
+      .addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-      const email = document.getElementById('login-email').value;
-      const senha = document.getElementById('login-senha').value;
+        const email = document.getElementById('login-email').value;
+        const senha = document.getElementById('login-senha').value;
 
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, senha }),
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, senha }),
+        });
+
+        const result = await response.json();
+        const mensagemDiv = document.getElementById('mensagem');
+
+        if (response.ok) {
+          exibirModal('Login bem-sucedido! Redirecionando...', true);
+          setTimeout(() => {
+            window.location.href = '/monitor.html';
+          }, 1500);
+        } else {
+          exibirModal(result.error || 'Erro ao fazer login. Tente novamente.', false);
+        }
+
       });
-
-      const result = await response.json();
-      const mensagemDiv = document.getElementById('mensagem');
-
-      if (response.ok) {
-        mensagemDiv.style.color = 'green';
-        mensagemDiv.innerHTML = 'Login bem-sucedido! Redirecionando...';
-        setTimeout(() => {
-          window.location.href = '/monitor.html';
-        }, 1500);
-      } else {
-        mensagemDiv.style.color = 'red';
-        mensagemDiv.innerHTML = result.error || 'Erro ao fazer login. Tente novamente.';
-      }
-    });
     // Mostrar/ocultar senha do login
     document.getElementById('toggleSenhaLogin').addEventListener('click', function (e) {
       e.stopPropagation(); // impede o flip do card
@@ -376,6 +479,48 @@
       this.classList.toggle('fa-eye');
       this.classList.toggle('fa-eye-slash');
     });
+    function mostrarMensagem(texto, tipo = 'sucesso') {
+      const icone = document.querySelector('.modal-icone i');
+      const textoMensagem = document.getElementById('textoMensagem');
+      const modal = document.getElementById('modalMensagem');
+
+      textoMensagem.textContent = texto;
+
+      if (tipo === 'erro') {
+        icone.className = 'fas fa-times-circle';
+        icone.style.color = '#e74c3c';
+      } else if (tipo === 'info') {
+        icone.className = 'fas fa-info-circle';
+        icone.style.color = '#3498db';
+      } else {
+        icone.className = 'fas fa-check-circle';
+        icone.style.color = '#2ecc71';
+      }
+
+      modal.style.display = 'flex';
+    }
+
+
+    function exibirModal(mensagem, sucesso = true) {
+      const modal = document.getElementById('modalMensagem');
+      const texto = document.getElementById('textoMensagem');
+      texto.textContent = mensagem;
+      texto.style.color = sucesso ? 'green' : 'red';
+      modal.style.display = 'block';
+    }
+
+    // Fechar modal manualmente
+    document.getElementById('fecharModal').onclick = function () {
+      document.getElementById('modalMensagem').style.display = 'none';
+    }
+
+    // Fechar modal clicando fora
+    window.onclick = function (event) {
+      const modal = document.getElementById('modalMensagem');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
 
 
   </script>
