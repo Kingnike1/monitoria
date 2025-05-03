@@ -63,6 +63,6 @@ Armazena os seguintes dados:
 
 <!-- Criar um painel de monitor para visualizar as presenças. -->
 
-Adicionar autenticação, se necessário.
+<!-- Adicionar autenticação, se necessário.
 
-Implementar a exportação dos dados para PDF ou Excel.
+Implementar a exportação dos dados para PDF ou Excel. -->
