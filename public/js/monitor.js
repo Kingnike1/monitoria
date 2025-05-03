@@ -209,12 +209,12 @@ async function carregarPresencas() {
 // Logout
 function logout() {
   fetch("/logout", {
-    method: "POST",
+    method: "GET",
     headers: { "Content-Type": "application/json" },
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = "/index.html";
+        window.location.href = "/";
       } else {
         alert("Erro ao fazer logout");
       }

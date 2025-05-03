@@ -9,11 +9,16 @@
 <body>
   <div class="container">
     <h2>Registro de Presença</h2>
+
     <form id="presencaForm">
-      <input type="text" id="nome_aluno" placeholder="Nome do Aluno" required>
       
-      <!-- Campo de seleção para as turmas -->
-      <select id="turma" required>
+      <!-- Nome do aluno -->
+      <label for="nome_aluno">Nome do Aluno</label>
+      <input type="text" id="nome_aluno" name="nome_aluno" placeholder="Nome do Aluno" required>
+
+      <!-- Seleção de Turma -->
+      <label for="turma">Turma</label>
+      <select id="turma" name="turma" required>
         <option value="" disabled selected>Selecione a Turma</option>
         <option value="1º A - Agropecuária">1º A - Agropecuária</option>
         <option value="1º B - Agropecuária">1º B - Agropecuária</option>
@@ -33,17 +38,31 @@
         <option value="3º B - Informática">3º B - Informática</option>
         <option value="3º - Meio Ambiente">3º - Meio Ambiente</option>
       </select>
-            <!-- Novo campo para selecionar o monitor -->
-            <select id="monitor" required>
-              <option value="" disabled selected>Selecione o Monitor</option>
-              <!-- Os monitores serão inseridos dinamicamente aqui -->
-            </select>
-      <input type="date" id="data" required>
-      <input type="time" id="horario" required>
-      <textarea id="conteudo" placeholder="Conteúdo Ensinado"></textarea>
+
+      <!-- Seleção do Monitor -->
+      <label for="monitor">Monitor Responsável</label>
+      <select id="monitor" name="monitor" required>
+        <option value="" disabled selected>Selecione o Monitor</option>
+        <!-- Populado via JavaScript -->
+      </select>
+
+      <!-- Data -->
+      <label for="data">Data da Monitoria</label>
+      <input type="date" id="data" name="data" required>
+
+      <!-- Horário -->
+      <label for="horario">Horário</label>
+      <input type="time" id="horario" name="horario" required>
+
+      <!-- Conteúdo Ensinado -->
+      <label for="conteudo">Conteúdo Ensinado</label>
+      <textarea id="conteudo" name="conteudo" placeholder="Descreva o conteúdo abordado" rows="4"></textarea>
+
+      <!-- Botão -->
       <button type="submit">Registrar Presença</button>
     </form>
   </div>
+
   <script src="/js/script.js"></script>
 </body>
 </html>
