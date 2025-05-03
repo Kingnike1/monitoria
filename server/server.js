@@ -136,9 +136,16 @@ app.post('/cadastrar', async (req, res) => {
   });
 });
 
-// Relatório PDF
+
 app.get('/gerar-relatorio/pdf', verificarAutenticacao, (req, res) => {
-  db.query('SELECT * FROM presencas ORDER BY data DESC, horario DESC', (err, presencas) => {
+  const sql = `
+    SELECT p.id, p.nome_aluno, p.turma, p.data, p.horario, p.conteudo, m.nome AS nome_monitor
+    FROM presencas p
+    JOIN monitores m ON p.monitor_id = m.id
+    ORDER BY p.data DESC, p.horario DESC
+  `;
+
+  db.query(sql, (err, presencas) => {
     if (err) {
       console.error('Erro ao buscar presenças:', err);
       return res.status(500).json({ error: 'Erro ao gerar o relatório PDF' });
@@ -149,16 +156,25 @@ app.get('/gerar-relatorio/pdf', verificarAutenticacao, (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename=relatorio_presencas.pdf');
     doc.pipe(res);
 
-    doc.fontSize(20).text('Relatório de Presenças', { align: 'center' });
+    doc.fontSize(16).text('Relatório de Presenças', { align: 'center' });
     doc.moveDown();
 
+    const formatarData = (dataISO) => {
+      const d = new Date(dataISO);
+      return d.toLocaleDateString('pt-BR');
+    };
+
     presencas.forEach(p => {
-      doc.fontSize(12).text(`ID: ${p.id} - Nome: ${p.nome} - Data: ${p.data} - Horário: ${p.horario}`);
+      doc.fontSize(12).text(
+        `ID: ${p.id} | Nome: ${p.nome_aluno} | Turma: ${p.turma} | Data: ${formatarData(p.data)} | Horário: ${p.horario.slice(0, 5)} | Conteúdo: ${p.conteudo} | Monitor: ${p.nome_monitor}`
+      );
+      doc.moveDown(0.5);
     });
 
     doc.end();
   });
 });
+
 
 // Relatório CSV
 app.get('/gerar-relatorio/csv', verificarAutenticacao, (req, res) => {

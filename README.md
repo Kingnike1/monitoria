@@ -1,68 +1,130 @@
-# 📖 Documentação do Sistema de Registro de Presença na Monitoria
+# 📚 Sistema de Registro de Presenças na Monitoria
 
-## 1. Visão Geral
-Este sistema tem como objetivo registrar a presença dos alunos na monitoria, armazenando informações como nome, série/turma, horário e conteúdo ensinado. Além disso, permite que o monitor valide os registros e gere relatórios.
+Sistema web completo para registrar a presença dos alunos durante sessões de monitoria, com painel do monitor, autenticação, geração de relatórios em PDF e visualização de dados.
 
-## 2. Funcionalidades
+## 👨‍💻 Desenvolvido por
+**Pablo Rodrigues Almeida**  
+Curso Técnico em Informática para Web  
+Último ano do Ensino Médio
 
-### 📌 Registro de Presença
-Alunos preenchem um formulário com:
-- Nome completo
-- Ano/Período e Turma
-- Confirmação de presença
+---
 
-### 📌 Painel do Monitor
-- Monitor pode visualizar e validar registros.
-- Adicionar o conteúdo ensinado.
-- Gerar relatórios de presença.
+## 🚀 Tecnologias Utilizadas
 
-### 📌 Banco de Dados
-Armazena os seguintes dados:
-- **ID** (chave primária)
-- **Data da monitoria**
-- **Horário da monitoria**
-- **Nome dos participantes**
-- **Ano/Período e Turma**
-- **Conteúdo ensinado**
+- **Node.js** com **Express**
+- **MySQL** com integração via `mysql2`
+- **PDFKit** para geração de relatórios
+- **JavaScript**, **HTML5**, **CSS3**
+- **Docker** e `docker-compose`
+- **Chart.js** (gráficos)
+- Autenticação com **express-session**
 
-### 📌 Gerar Relatórios
-- Exportação dos registros em formato **PDF** ou **Excel**.
+---
 
-### 📌 Autenticação (Opcional)
-- Login para acesso ao painel do monitor.
+## 📁 Estrutura de Pastas
 
-## 3. Tecnologias Utilizadas
-- **Frontend:** HTML, CSS, JavaScript (podemos adicionar Vue.js futuramente).
-- **Backend:** Laravel (PHP) para gerenciar dados e lógica do sistema.
-- **Banco de Dados:** MySQL ou SQLite.
+```
 
-## 4. Estrutura do Banco de Dados (Migrations Laravel)
+monitoria/
+├── banco.sql                   # Script SQL do banco de dados
+├── docker-compose.yml         # Orquestrador do ambiente Docker
+├── Dockerfile                 # Dockerfile raiz
+├── README.md
+└── server/
+├── config/db.js           # Conexão com MySQL
+├── Dockerfile             # Dockerfile do backend
+├── models/presenca.js     # Modelo da tabela presenca
+├── public/                # Arquivos estáticos
+│   ├── css/
+│   └── js/
+├── routes/presenca.js     # Rotas da API
+├── server.js              # Backend principal
+└── views/                 # Páginas HTML
 
-### Tabela `monitoria_presencas`
+````
 
-| Campo           | Tipo       | Descrição                 |
-|---------------|-----------|---------------------------|
-| id            | INT (PK)  | Identificador único       |
-| data_monitoria | DATE      | Data da monitoria         |
-| horario       | TIME      | Horário da monitoria      |
-| nome_aluno    | STRING    | Nome do aluno             |
-| turma        | STRING    | Ano/Período e Turma       |
-| conteudo      | TEXT      | Conteúdo ensinado         |
+---
 
-## 5. Fluxo do Sistema
-1️⃣ **Aluno preenche o formulário** com seu nome, turma e confirma presença.
-2️⃣ **Monitor acessa o painel** para validar os registros e adicionar o conteúdo ensinado.
-3️⃣ **Monitor pode gerar relatórios** de presença e exportar em PDF ou Excel.
+## ⚙️ Como executar o projeto
 
-## 6. Próximos Passos
-✅ Criar a estrutura do banco de dados (**migrations no Laravel**).
-✅ Criar o formulário de **registro de presença**.
-✅ Criar o **painel do monitor** para visualizar os registros.
-✅ Implementar exportação para **PDF/Excel**.
+### ✅ Executando com Docker
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/seuusuario/monitoria.git
+cd monitoria
+````
+
+2. Inicie os containers:
+
+```bash
+docker-compose up --build
+```
+
+3. O sistema estará acessível em:
+
+```
+http://localhost:3000
+```
+
+4. Acesse o MySQL com:
+
+* Host: `localhost`
+* Porta: `3306`
+* Usuário: `root`
+* Senha: `123456`
+* Banco: `monitoria`
+
+> Use o arquivo `banco.sql` para importar as tabelas e dados iniciais.
+
+---
+
+## 📋 Funcionalidades
+
+* ✅ Registro de presença dos alunos (nome, turma, conteúdo, horário)
+* ✅ Tela do monitor com controle de sessões
+* ✅ Geração de relatório em PDF
+* ✅ Listagem das presenças
+* ✅ Gráficos de dados com Chart.js
+* ✅ Login com autenticação de sessão
+* ⚙️ (em desenvolvimento) Filtros de busca, exportação em CSV, etc.
+
+---
+
+## 💡 Ideias futuras
+
+* Exportar relatórios em CSV
+* Tela para gerenciar monitores
+* Filtro por data, turma, conteúdo
+* Dashboard com estatísticas de presença
+* Upload de arquivos e anotações
+
+---
+
+## 📷 Prints do Sistema
+
+1. Tela de Login:
+![Tela de Login](./server/public/img/login.png)
+
+2. Tela de Registro de Presença:
+![Tela de Registro de Presença](./server/public/img/registro_presenca.png)
+
+3. Painel de Monitoria:
+![Painel de Monitoria](./server/public/img/painel_principal.png)
+
+---
+
+## 📜 Licença
+
+Este projeto é de uso acadêmico e livre para aprendizado.
+
+---
+
+## 🤝 Contato
+
+Se quiser colaborar, corrigir bugs ou sugerir melhorias:
+
+* GitHub: [github.com/Kingnike1](https://github.com/Kingnike1)
+* Email: [pabloalmeidathe1@email.com](mailto:pabloalmeidathe1@email.com)
 
 
-<!-- Criar um painel de monitor para visualizar as presenças. -->
-
-<!-- Adicionar autenticação, se necessário.
-
-Implementar a exportação dos dados para PDF ou Excel. -->
