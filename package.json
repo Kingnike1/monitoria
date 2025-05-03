@@ -1,7 +1,7 @@
 {
   "name": "monitoria",
   "version": "1.0.0",
-  "description": "## 1. Visão Geral Este sistema tem como objetivo registrar a presença dos alunos na monitoria, armazenando informações como nome, série/turma, horário e conteúdo ensinado. Além disso, permite que o monitor valide os registros e gere relatórios.",
+  "description": "Sistema para registrar a presença dos alunos nas monitorias, armazenando nome, turma, horário e conteúdo ensinado. Permite validação dos registros pelo monitor e geração de relatórios.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -23,5 +23,23 @@ services:
     ports:
       - "3307:3306"
 
+  node:
+    container_name: "node"
+    build: ./server
+    image: node:14
+    volumes:
+      - ./server:/app
+    working_dir: /app
+    command: ["node", "server.js"]
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db  # Espera o DB iniciar antes de rodar
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=123
+      - DB_NAME=monitoria  # Nome do seu banco de dados
+
 volumes:
   mariadb_data:
