@@ -191,6 +191,11 @@ app.get('/gerar-relatorio/csv', verificarAutenticacao, (req, res) => {
   });
 });
 
+// Página 404 personalizada (deve ficar por último)
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+});
+
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
