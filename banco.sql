@@ -25,3 +25,10 @@ CREATE TABLE IF NOT EXISTS presencas (
     FOREIGN KEY (monitor_id) REFERENCES monitores (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS sessoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    monitor_id INT NOT NULL,
+    hora_inicio DATETIME NOT NULL,
+    hora_fim DATETIME,
+    FOREIGN KEY (monitor_id) REFERENCES monitores(id)
+);

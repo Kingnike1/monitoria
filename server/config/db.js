@@ -5,7 +5,9 @@ const db = mysql.createConnection({
   user: 'root',
   password: '123',
   database: 'monitoria',
-  port: 3306             // porta interna do container
+  port: 3306,             // porta interna do container
+  timezone: "-03:00" // <- Fuso horário de Brasília
+
 });
 
 db.connect((err) => {
