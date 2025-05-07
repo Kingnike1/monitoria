@@ -1,13 +1,38 @@
-document
-  .getElementById("presencaForm")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
+document.getElementById("presencaForm").addEventListener("dblclick", (e) => {
+  e.preventDefault(); // Evita que o formulário seja enviado imediatamente
 
-    // Obtenção dos dados do formulário
-    const nomeAluno = document.getElementById("nome_aluno").value;
-    const turma = document.getElementById("turma").value;
-    const sessaoId = document.getElementById("sessao").value; // Obtém o ID da sessão
-    const conteudo = document.getElementById("conteudo").value;
+  // Obter os dados do formulário
+  const nomeAluno = document.getElementById("nome_aluno").value;
+  const turma = document.getElementById("turma").value;
+  const sessao = document.getElementById("sessao").value;
+  const conteudo = document.getElementById("conteudo").value;
+
+  // Validar se todos os campos estão preenchidos
+  if (!nomeAluno || !turma || !sessao || !conteudo) {
+    alert("Por favor, preencha todos os campos.");
+    return;
+  }
+
+  // Preencher a modal com os dados
+  document.getElementById("confirmNome").textContent = nomeAluno;
+  document.getElementById("confirmTurma").textContent = turma;
+  document.getElementById("confirmSessao").textContent = sessao;
+  document.getElementById("confirmConteudo").textContent = conteudo;
+
+  // Exibir a modal de confirmação
+  document.getElementById("modalConfirmacao").style.display = "flex";
+});
+
+document
+  .getElementById("confirmarBtn")
+  .addEventListener("click", async function (e) {
+    e.preventDefault(); // Previne que o evento de clique no botão "Confirmar" seja propagado ou cause outro comportamento inesperado
+
+    // Obtenção dos dados da modal (confirmados pelo usuário)
+    const nomeAluno = document.getElementById("confirmNome").textContent;
+    const turma = document.getElementById("confirmTurma").textContent;
+    const sessaoId = document.getElementById("confirmSessao").textContent;
+    const conteudo = document.getElementById("confirmConteudo").textContent;
 
     // Criação do objeto com os dados a serem enviados
     const dados = {
@@ -26,7 +51,7 @@ document
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(dados), // Corpo com os dados do formulário
+          body: JSON.stringify(dados),
         }
       );
 
@@ -35,12 +60,20 @@ document
       // Mensagem de sucesso ou erro
       alert(result.message || "Presença registrada com sucesso!");
       document.getElementById("presencaForm").reset(); // Limpa o formulário após o envio
+      document.getElementById("modalConfirmacao").style.display = "none"; // Fecha o modal
     } catch (error) {
       // Caso ocorra um erro
       console.error("Erro ao registrar presença:", error);
       alert("Erro ao registrar presença. Verifique o console.");
     }
   });
+
+// Evento de cancelamento da modal
+document.getElementById("cancelarBtn").addEventListener("click", function () {
+  document.getElementById("modalConfirmacao").style.display = "none"; // Fecha o modal
+});
+
+// Função para carregar as sessões
 async function carregarSessoes() {
   try {
     const response = await fetch("http://localhost:3000/sessoes/ativas");
@@ -64,7 +97,7 @@ async function carregarSessoes() {
 
       const option = document.createElement("option");
       option.value = sessao.id;
-      option.textContent = `Sessão ${sessao.id} | ${sessao.monitor_nome} | ${horaInicio} às ${horaFim}`;
+      option.textContent = `${sessao.monitor_nome} | ${horaInicio} às ${horaFim}`;
       sessaoSelect.appendChild(option);
     });
   } catch (error) {

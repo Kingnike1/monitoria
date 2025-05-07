@@ -6,6 +6,7 @@
     <title>Registro de Presença</title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
+
   <body>
     <div class="container">
       <h2>Registro de Presença</h2>
@@ -60,9 +61,22 @@
           rows="4"
         ></textarea>
 
-        <!-- Botão -->
-        <button type="submit">Registrar Presença</button>
+        <!-- Botão para revisar -->
+        <button type="button" id="revisarBtn">Revisar</button>
       </form>
+
+      <!-- Modal de confirmação -->
+      <div id="modalConfirmacao" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+          <h3>Confirme os dados</h3>
+          <p><strong>Nome:</strong> <span id="confirmNome"></span></p>
+          <p><strong>Turma:</strong> <span id="confirmTurma"></span></p>
+          <p><strong>Sessão:</strong> <span id="confirmSessao"></span></p>
+          <p><strong>Conteúdo:</strong> <span id="confirmConteudo"></span></p>
+          <button id="confirmarBtn">Confirmar</button>
+          <button id="cancelarBtn">Cancelar</button>
+        </div>
+      </div>
     </div>
 
     <script src="/js/script.js"></script>

@@ -245,25 +245,68 @@ app.get("/gerar-relatorio/pdf", verificarAutenticacao, (req, res) => {
 });
 
 // Relatório CSV
-app.get("/gerar-relatorio/csv", verificarAutenticacao, (req, res) => {
-  db.query(
-    "SELECT * FROM presencas ORDER BY data DESC, horario DESC",
-    (err, presencas) => {
-      if (err) {
-        console.error("Erro ao buscar presenças:", err);
-        return res.status(500).json({ error: "Erro ao gerar o relatório CSV" });
-      }
+app.get("/gerar-relatorio/csv", verificarAutenticacao, async (req, res) => {
+  try {
+    // Consulta de presenças com informações do monitor
+    const presencas = await obterPresencas();
 
-      const csv = parse(presencas);
-      res.setHeader("Content-Type", "text/csv");
-      res.setHeader(
-        "Content-Disposition",
-        "attachment; filename=relatorio_presencas.csv"
-      );
-      res.send(csv);
-    }
-  );
+    // Gerar CSV a partir dos dados
+    const csv = await gerarCsv(presencas);
+
+    // Configurações de cabeçalho para download do arquivo CSV
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=relatorio_presencas.csv");
+
+    // Envia o CSV para o cliente
+    res.send(csv);
+
+  } catch (error) {
+    console.error("Erro ao gerar relatório CSV:", error);
+    res.status(500).json({ error: "Erro ao gerar o relatório CSV" });
+  }
 });
+
+// Função para obter as presenças com informações do monitor
+const obterPresencas = () => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT p.id, p.nome_aluno, p.turma, p.data, p.horario, p.conteudo, m.nome AS nome_monitor
+      FROM presencas p
+      JOIN monitores m ON p.monitor_id = m.id
+      ORDER BY p.data DESC, p.horario DESC
+    `;
+    
+    db.query(sql, (err, results) => {
+      if (err) {
+        reject("Erro ao buscar presenças.");
+      } else {
+        resolve(results);
+      }
+    });
+  });
+};
+
+// Função para gerar o CSV a partir das presenças
+const gerarCsv = (presencas) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const csv = parse(presencas, {
+        fields: [
+          "id", 
+          "nome_aluno", 
+          "turma", 
+          "data", 
+          "horario", 
+          "conteudo", 
+          "nome_monitor"
+        ],
+      });
+      resolve(csv);
+    } catch (error) {
+      reject("Erro ao converter dados para CSV.");
+    }
+  });
+};
 
 // Página 404 personalizada (deve ficar por último)
 app.use((req, res) => {

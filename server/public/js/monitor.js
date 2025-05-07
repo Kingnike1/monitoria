@@ -239,15 +239,32 @@ document.getElementById("gerar-pdf").addEventListener("click", () => {
     .catch((error) => console.error("Erro ao gerar relatório PDF:", error));
 });
 
-// Gerar CSV
-document.getElementById("gerar-csv").addEventListener("click", () => {
-  fetch("/gerar-relatorio/csv")
-    .then((response) => response.text())
-    .then((csv) => {
-      const link = document.createElement("a");
-      link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-      link.download = "relatorio.csv";
-      link.click();
-    })
-    .catch((error) => console.error("Erro ao gerar relatório CSV:", error));
+document.getElementById("gerar-csv").addEventListener("click", async () => {
+  try {
+    const response = await fetch("/gerar-relatorio/csv");
+
+    // Verificar se a resposta foi bem-sucedida
+    if (!response.ok) {
+      throw new Error(`Erro ao gerar relatório CSV: ${response.statusText}`);
+    }
+
+    const csv = await response.text();
+
+    // Criar o Blob com o conteúdo CSV e o tipo de mídia
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // Criar um link temporário para baixar o arquivo
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "relatorio_presencas.csv";
+
+    // Simular um clique no link para iniciar o download
+    link.click();
+
+    // Libera a URL criada para o objeto Blob
+    URL.revokeObjectURL(link.href);
+  } catch (error) {
+    console.error("Erro ao gerar relatório CSV:", error);
+    alert("Ocorreu um erro ao gerar o relatório CSV. Tente novamente.");
+  }
 });

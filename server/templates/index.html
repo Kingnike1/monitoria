@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- Estilos CSS para o Modal -->
+<style>
+  /* Estilo para o fundo escuro (overlay) */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Fica acima do conteúdo da página */
+  }
+
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal-content h3 {
+    text-align: center;
+  }
+
+  .modal-content p {
+    margin-bottom: 10px;
+  }
+
+  .modal-content button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .modal-content button:hover {
+    background-color: #45a049;
+  }
+
+  .modal-content button#cancelarBtn {
+    background-color: #f44336;
+  }
+
+  .modal-content button#cancelarBtn:hover {
+    background-color: #e53935;
+  }
+</style>
+</head>
+<body>
+  <form id="presencaForm">
+  <label for="nome_aluno">Nome do Aluno</label>
+  <input type="text" id="nome_aluno" required />
+
+  <label for="turma">Turma</label>
+  <input type="text" id="turma" required />
+
+  <label for="sessao">Sessão</label>
+  <select id="sessao" required>
+    <!-- Sessões disponíveis serão preenchidas aqui -->
+  </select>
+
+  <label for="conteudo">Conteúdo</label>
+  <textarea id="conteudo"></textarea>
+
+  <button type="button" id="revisarBtn">Revisar</button>
+</form>
+
+<!-- Modal de confirmação -->
+<div id="modalConfirmacao" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h3>Confirme os dados</h3>
+    <p><strong>Nome:</strong> <span id="confirmNome"></span></p>
+    <p><strong>Turma:</strong> <span id="confirmTurma"></span></p>
+    <p><strong>Conteúdo:</strong> <span id="confirmConteudo"></span></p>
+    <button id="confirmarBtn">Confirmar</button>
+    <button id="cancelarBtn">Cancelar</button>
+  </div>
+</div>
+
+<script>
+document.getElementById("revisarBtn").addEventListener("click", () => {
+  // Obter os dados do formulário
+  const nomeAluno = document.getElementById("nome_aluno").value;
+  const turma = document.getElementById("turma").value;
+  const conteudo = document.getElementById("conteudo").value;
+
+  // Preencher a modal com os dados
+  document.getElementById("confirmNome").textContent = nomeAluno;
+  document.getElementById("confirmTurma").textContent = turma;
+  document.getElementById("confirmConteudo").textContent = conteudo;
+
+  // Exibir a modal de confirmação
+  document.getElementById("modalConfirmacao").style.display = "flex";
+});
+
+document.getElementById("confirmarBtn").addEventListener("click", () => {
+  const nomeAluno = document.getElementById("nome_aluno").value;
+  const turma = document.getElementById("turma").value;
+  const sessaoId = document.getElementById("sessao").value;
+  const conteudo = document.getElementById("conteudo").value;
+
+  const dados = {
+    nome_aluno: nomeAluno,
+    turma,
+    sessao_id: sessaoId,
+    conteudo,
+  };
+
+  // Enviar os dados para o backend
+  fetch("/presencas/registrar", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dados),
+  })
+  .then((response) => response.json())
+  .then((result) => {
+    alert(result.message || "Presença registrada com sucesso!");
+    document.getElementById("presencaForm").reset(); // Limpa o formulário após o envio
+    document.getElementById("modalConfirmacao").style.display = "none"; // Fecha o modal
+  })
+  .catch((error) => {
+    console.error("Erro ao registrar presença:", error);
+    alert("Erro ao registrar presença.");
+  });
+});
+
+document.getElementById("cancelarBtn").addEventListener("click", () => {
+  document.getElementById("modalConfirmacao").style.display = "none"; // Fecha o modal
+});
+</script>
+
+
+</body>
+</html>
